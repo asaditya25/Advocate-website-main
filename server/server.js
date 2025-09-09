@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const path = require('path');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
 
 const appointmentRoutes = require('./routes/appointment');
@@ -25,12 +26,27 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB connection with detailed error handling
 (async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+    const mongoUri = process.env.MONGODB_URI;
+    // console.log("MongoDB URI:", mongoUri); // Debugging line
     if (!mongoUri) {
       throw new Error('MongoDB connection string not found. Please set MONGODB_URI environment variable.');
     }
     await mongoose.connect(mongoUri);
     console.log('✅ MongoDB connected successfully');
+
+    // Additional MongoDB ping check
+    const client = new MongoClient(mongoUri, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      }
+    });
+    await client.connect();
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    await client.close();
+
   } catch (err) {
     console.error('❌ MongoDB connection error:', err.message);
     if (err.name === 'MongooseServerSelectionError') {

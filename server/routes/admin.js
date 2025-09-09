@@ -1,11 +1,76 @@
+
 const express = require('express');
 const Admin = require('../models/Admin');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const { validateAdminLogin } = require('../middleware/validate');
 const { authLimiter } = require('../middleware/rateLimit');
 
+
 const router = express.Router();
+
+// POST /api/admin/forgot-password - send password reset email
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    admin.resetToken = resetToken;
+    admin.resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    await admin.save();
+
+    // Send email (configure transporter with your SMTP credentials)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const resetUrl = `https://your-frontend-url/reset-password?token=${resetToken}`;
+    await transporter.sendMail({
+      to: admin.email,
+      subject: 'Admin Password Reset',
+      text: `Reset your password using this link: ${resetUrl}`,
+    });
+
+    res.json({ message: 'Password reset email sent' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/admin/reset-password - reset password using token
+router.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+  try {
+    const admin = await Admin.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
+    });
+    if (!admin) {
+      return res.status(400).json({ error: 'Invalid or expired token' });
+    }
+    admin.password = await bcrypt.hash(newPassword, 10);
+    admin.resetToken = undefined;
+    admin.resetTokenExpiry = undefined;
+    await admin.save();
+    res.json({ message: 'Password reset successful' });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ...existing code...
 
 // POST /api/admin/login - admin login
 router.post('/login', authLimiter, validateAdminLogin, async (req, res) => {
