@@ -48,7 +48,13 @@ app.use('/api/admin', adminRoutes);
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
-// Serve static files from the React app build
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// Catch-all route: send index.html for any non-API requests (client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Catch-all route: send index.html for any non-API requests (client-side routing)
