@@ -26,11 +26,11 @@ router.post('/forgot-password', async (req, res) => {
     await admin.save();
 
     // Send email (configure transporter with your SMTP credentials)
-    const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransporter({
       service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
       },
     });
 

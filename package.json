@@ -1,0 +1,20 @@
+{
+  "name": "advocate-website",
+  "version": "1.0.0",
+  "description": "Full-stack advocate website",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start",
+    "start:production": "npm run build:frontend && npm run start:backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "license": "MIT"
+}

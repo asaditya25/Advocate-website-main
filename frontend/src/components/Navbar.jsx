@@ -14,17 +14,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    setIsAdmin(!!localStorage.getItem("adminToken"));
-  }, [location]);
+  // useEffect(() => {
+  //   setIsAdmin(!!localStorage.getItem("adminToken"));
+  // }, [location]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    setIsAdmin(false);
-    navigate("/admin");
-  };
+ 
 
   return (
     <header className="sticky top-0 z-50 bg-navy text-ivory shadow-md font-sans">
@@ -43,21 +39,7 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-          {isAdmin ? (
-            <button
-              onClick={handleLogout}
-              className="ml-4 px-4 py-2 rounded-lg font-bold border-2 border-gold text-gold bg-navy hover:bg-gold hover:text-navy transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link
-              to="/admin"
-              className="ml-4 bg-gold text-navy px-4 py-2 rounded-lg font-bold shadow hover:bg-navy hover:text-gold border-2 border-gold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
-            >
-              Admin Login
-            </Link>
-          )}
+          
         </div>
         <button
           className="lg:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-gold"
@@ -97,24 +79,7 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
-          <li>
-            {isAdmin ? (
-              <button
-                onClick={() => { setOpen(false); handleLogout(); }}
-                className="block w-full mt-2 py-2 px-3 rounded-lg border-2 border-gold text-gold bg-navy font-bold hover:bg-gold hover:text-navy transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold text-center"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                to="/admin"
-                className="block mt-2 py-2 px-3 rounded-lg bg-gold text-navy font-bold shadow hover:bg-navy hover:text-gold border-2 border-gold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold text-center"
-                onClick={() => setOpen(false)}
-              >
-                Admin Login
-              </Link>
-            )}
-          </li>
+          
         </ul>
       </aside>
     </header>

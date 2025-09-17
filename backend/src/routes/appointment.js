@@ -3,7 +3,7 @@ const Appointment = require('../models/Appointment');
 const jwt = require('jsonwebtoken');
 const { validateAppointment } = require('../middleware/validate');
 const { formLimiter, authLimiter } = require('../middleware/rateLimit');
-const emailService = require('../utils/emailService');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 

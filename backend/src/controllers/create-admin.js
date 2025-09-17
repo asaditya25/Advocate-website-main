@@ -18,14 +18,14 @@ function askQuestion(question) {
 
 async function createAdmin() {
   try {
-    if (!process.env.MONGO_URI) {
-      console.error('❌ Error: MONGO_URI not found in .env file');
+    if (!process.env.MONGODB_URI) {
+      console.error('❌ Error: MONGODB_URI not found in .env file');
       console.log('Please set up your .env file with MongoDB connection string');
       process.exit(1);
     }
 
     console.log('🔗 Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
 
     let email, password;

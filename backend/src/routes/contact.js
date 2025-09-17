@@ -2,7 +2,7 @@ const express = require('express');
 const Contact = require('../models/Contact');
 const { validateContact } = require('../middleware/validate');
 const { formLimiter } = require('../middleware/rateLimit');
-const emailService = require('../utils/emailService');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 
